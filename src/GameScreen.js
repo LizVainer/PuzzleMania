@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./GameScreen.css";
 
 function GameScreen() {
@@ -8,7 +8,10 @@ function GameScreen() {
   const [showWin, setShowWin] = useState(false);
   const [winFadeOut, setWinFadeOut] = useState(false);
   const touchStartIndex = useRef(null);
+  const touchTargetIndex = useRef(null);
+  const touchGhostRef = useRef(null);
 
+  // 🖱️ Desktop drag start
   const handleDragStart = (e, index) => {
     setDraggingIndex(index);
     e.dataTransfer.setData("text/plain", index);
@@ -26,6 +29,7 @@ function GameScreen() {
     e.dataTransfer.setDragImage(tile, 25, 25);
   };
 
+  // 🖱️ Desktop drag end
   const handleDragEnd = () => {
     setDraggingIndex(null);
     if (dragImageRef.current) {
@@ -35,8 +39,10 @@ function GameScreen() {
     document.activeElement.blur();
   };
 
+  // 🖱️ Allow dropping
   const handleDragOver = (e) => e.preventDefault();
 
+  // 🖱️ Desktop drop
   const handleDrop = (e, targetIndex) => {
     e.preventDefault();
     const fromIndex = draggingIndex;
@@ -44,17 +50,62 @@ function GameScreen() {
     swapTiles(fromIndex, targetIndex);
   };
 
-  const handleTouchStart = (index) => {
+  // 📱 Touch start
+  const handleTouchStart = (index, e) => {
     touchStartIndex.current = index;
+
+    // create floating ghost
+    const ghost = e.target.cloneNode(true);
+    ghost.style.position = "fixed";
+    ghost.style.pointerEvents = "none";
+    ghost.style.opacity = "0.8";
+    ghost.style.width = `${e.target.offsetWidth}px`;
+    ghost.style.height = `${e.target.offsetHeight}px`;
+    ghost.style.zIndex = "1000";
+    ghost.classList.add("mobile-drag-ghost");
+    document.body.appendChild(ghost);
+    touchGhostRef.current = ghost;
   };
 
-  const handleTouchEnd = (index) => {
+  // 📱 Touch move
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+
+    // update ghost position
+    if (touchGhostRef.current) {
+      touchGhostRef.current.style.left = `${touch.clientX - 40}px`;
+      touchGhostRef.current.style.top = `${touch.clientY - 40}px`;
+    }
+
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (target && target.classList.contains("tile")) {
+      const targetIndex = parseInt(target.getAttribute("data-index"));
+      if (!isNaN(targetIndex)) {
+        touchTargetIndex.current = targetIndex;
+      }
+    }
+  };
+
+  // 📱 Touch end
+  const handleTouchEnd = () => {
     const fromIndex = touchStartIndex.current;
-    if (fromIndex === null || fromIndex === index) return;
-    swapTiles(fromIndex, index);
+    const toIndex = touchTargetIndex.current;
+
+    if (fromIndex !== null && toIndex !== null && fromIndex !== toIndex) {
+      swapTiles(fromIndex, toIndex);
+    }
+
     touchStartIndex.current = null;
+    touchTargetIndex.current = null;
+
+    // remove ghost
+    if (touchGhostRef.current) {
+      document.body.removeChild(touchGhostRef.current);
+      touchGhostRef.current = null;
+    }
   };
 
+  // 🔄 Swap logic
   const swapTiles = (fromIndex, targetIndex) => {
     const newTiles = [...tiles];
     [newTiles[fromIndex], newTiles[targetIndex]] = [newTiles[targetIndex], newTiles[fromIndex]];
@@ -64,7 +115,6 @@ function GameScreen() {
     if (isSolved(newTiles)) {
       setShowWin(true);
       setWinFadeOut(false);
-
       setTimeout(() => setWinFadeOut(true), 1600);
       setTimeout(() => {
         setShowWin(false);
@@ -95,8 +145,10 @@ function GameScreen() {
                 onDragEnd: handleDragEnd,
                 onDragOver: handleDragOver,
                 onDrop: (e) => handleDrop(e, visualIndex),
-                onTouchStart: () => handleTouchStart(visualIndex),
-                onTouchEnd: () => handleTouchEnd(visualIndex),
+                onTouchStart: (e) => handleTouchStart(visualIndex, e),
+                onTouchMove: handleTouchMove,
+                onTouchEnd: handleTouchEnd,
+                "data-index": visualIndex,
                 style: {
                   ...getTileStyle(tileValue),
                   left: `${(visualIndex % 3) * 33.33}%`,
