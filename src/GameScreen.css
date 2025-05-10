@@ -63,8 +63,6 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding-top: 5vh; /* safer than negative margins */
-  overflow: hidden;
 }
 
 .game-canvas {
@@ -78,7 +76,7 @@ body {
   justify-content: flex-start;
   gap: 2rem;
   padding-top: 1rem;
-  margin-top: 0; /* removed -28vh */
+  margin-top: -28vh;
 }
 
 /* ─────────────────────────────────────────────
@@ -239,10 +237,6 @@ body {
    📱 Mobile Adjustments
 ────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .game-canvas-wrapper {
-    padding-top: 2vh;
-  }
-
   .game-canvas {
     margin-top: 0;
     padding-top: 5rem;
