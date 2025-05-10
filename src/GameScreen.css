@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: 'PublicPixel';
-  src: url('/src/assets/fonts/PublicPixel.ttf') format('truetype');
+  src: url('/assets/fonts/PublicPixel.ttf') format('truetype');
   font-display: swap;
 }
 
@@ -49,7 +49,7 @@ body {
 .game-screen-wrapper {
   width: 100vw;
   height: 100vh;
-  background: url('assets/background.png') center/cover no-repeat;
+  background: url('/assets/background.png') center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -180,11 +180,11 @@ body {
 }
 
 .shuffle-button {
-  background-image: url('assets/btnShuffle.png');
+  background-image: url('/assets/btnShuffle.png');
 }
 
 .upload-button {
-  background-image: url('assets/btnUpload.png');
+  background-image: url('/assets/btnUpload.png');
   margin-top: 0.5rem;
   margin-bottom: 0;
 }
