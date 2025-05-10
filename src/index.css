@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: 'PublicPixel';
-  src: url('/src/assets/fonts/PublicPixel.ttf') format('truetype');
+  src: url('/assets/fonts/PublicPixel.ttf') format('truetype');
   font-display: swap;
 }
 @keyframes pixelBounce {
@@ -68,7 +68,7 @@ body {
   width: 100vw;
   height: 100vh;
 
-  background-image: url('assets/background.png');
+  background-image: url('/assets/background.png');
   background-size: cover; 
   background-repeat: no-repeat;
   background-position: center;

@@ -11,7 +11,7 @@ function App(props) {
     React.createElement("div", { className: "overlay" },
       React.createElement("h1", null, "🧩Welcome to Puzzle Mania!"),
       React.createElement("img", {
-        src: "/src/assets/btnPlay.png",
+        src: "/assets/btnPlay.png",
         alt: "Play Button",
         className: "play-button",
         onClick: handleStart,

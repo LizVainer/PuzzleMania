@@ -171,7 +171,7 @@ function getTileStyle(tileValue) {
   const row = Math.floor(tileValue / 3);
   const col = tileValue % 3;
   return {
-    backgroundImage: "var(--user-img, url('/src/assets/background.png'))",
+    backgroundImage: "var(--user-img, url('/assets/background.png'))",
     backgroundSize: "300% 300%",
     backgroundPosition: `${(col / 2) * 100}% ${(row / 2) * 100}%`,
     position: "absolute",
