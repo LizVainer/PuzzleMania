@@ -1,0 +1,260 @@
+/* ─────────────────────────────────────────────
+   🌐 Global Variables & Font
+────────────────────────────────────────────── */
+:root {
+  --title-size: clamp(2rem, 5vw, 4rem);
+}
+
+@font-face {
+  font-family: 'PublicPixel';
+  src: url('/src/assets/fonts/PublicPixel.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────
+   🧱 Base Reset & Layout
+────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+  overflow: hidden;
+  background-color: black;
+}
+
+/* ─────────────────────────────────────────────
+   🔁 Animations
+────────────────────────────────────────────── */
+@keyframes pixelBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1vh); }
+}
+
+@keyframes popupBounce {
+  0%   { transform: scale(0.7); opacity: 0; }
+  50%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────────
+   🎮 Main Wrapper & Canvas
+────────────────────────────────────────────── */
+.game-screen-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: url('assets/background.png') center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.game-canvas-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.game-canvas {
+  width: 1280px;
+  height: 720px;
+  transform: scale(calc(min(100vw / 1280, 100vh / 720)));
+  transform-origin: top center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  padding-top: 1rem;
+  margin-top: -28vh;
+}
+
+/* ─────────────────────────────────────────────
+   🧩 Title
+────────────────────────────────────────────── */
+.puzzle-title {
+  font-family: 'PublicPixel', monospace;
+  font-size: var(--title-size);
+  background: linear-gradient(to bottom, white, #00c3ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  animation: pixelBounce 1.2s infinite steps(2, end);
+}
+
+/* ─────────────────────────────────────────────
+   📦 Game Content & Box
+────────────────────────────────────────────── */
+.game-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.game-box {
+  width: clamp(300px, 90vw, 650px);
+  padding: clamp(1rem, 2vw, 2rem);
+  background-color: rgba(0, 136, 255, 0.3);
+  border-radius: clamp(10px, 2vw, 20px);
+  box-shadow: 0 0 clamp(10px, 2vw, 20px) rgba(0, 136, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* 🔁 Responsive scaling for mid–large screens */
+@media (min-width: 601px) and (max-width: 1990px) {
+  .game-box {
+    transform: scale(0.85);
+    transform-origin: top center;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   🧱 Puzzle Grid & Tiles
+────────────────────────────────────────────── */
+.puzzle-grid {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.tile {
+  position: absolute;
+  width: 33.33%;
+  height: 33.33%;
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  image-rendering: pixelated;
+  cursor: grab;
+  transition: transform 0.15s steps(2, end);
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile:active {
+  cursor: grabbing;
+}
+
+.tile.empty {
+  background-color: white;
+  border: 2px dashed #00c3ff;
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────
+   🎮 Buttons (Shuffle / Upload)
+────────────────────────────────────────────── */
+.shuffle-button,
+.upload-button {
+  width: clamp(150px, 30vw, 300px);
+  aspect-ratio: 2.14;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+  image-rendering: pixelated;
+  transition: transform 0.15s steps(2, end);
+  font-size: 0;
+  padding: 0;
+  display: block;
+}
+
+.shuffle-button {
+  background-image: url('assets/btnShuffle.png');
+}
+
+.upload-button {
+  background-image: url('assets/btnUpload.png');
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.shuffle-button:hover,
+.upload-button:hover {
+  transform: scale(1.03);
+}
+
+.shuffle-button:active,
+.upload-button:active {
+  transform: scale(0.98);
+}
+
+.upload-hidden-input {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────
+   🏆 Win Popup
+────────────────────────────────────────────── */
+.win-popup-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.win-popup {
+  background: rgba(255, 255, 255, 0.92);
+  padding: clamp(1rem, 2vw, 2rem) clamp(1.5rem, 3vw, 3rem);
+  border: clamp(2px, 0.4vw, 6px) solid #00c3ff;
+  border-radius: clamp(0.5rem, 1vw, 1.5rem);
+  font-family: 'PublicPixel', monospace;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: #00c3ff;
+  animation: popupBounce 0.6s steps(2, end);
+  box-shadow: 0 0 clamp(1rem, 2vw, 2rem) #00c3ff88;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.win-popup.fade-out {
+  opacity: 0;
+}
+
+/* ─────────────────────────────────────────────
+   📱 Mobile Adjustments
+────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .game-canvas {
+    margin-top: 0;
+    padding-top: 5rem;
+  }
+
+  .game-box {
+    width: 90vw;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .shuffle-button,
+  .upload-button {
+    width: 80vw;
+  }
+
+  .upload-button {
+    margin-top: -5rem;
+    margin-bottom: 0;
+  }
+}
